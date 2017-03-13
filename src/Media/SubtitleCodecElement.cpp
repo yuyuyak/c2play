@@ -40,15 +40,15 @@ void SubtitleDecoderElement::SetupCodec()
 			break;
 
 		case SubtitleFormatEnum::Pgs:
-			avcodec = avcodec_find_decoder(CODEC_ID_HDMV_PGS_SUBTITLE);
+			avcodec = avcodec_find_decoder(AV_CODEC_ID_HDMV_PGS_SUBTITLE);
 			break;
 
 		case SubtitleFormatEnum::Dvb:
-			avcodec = avcodec_find_decoder(CODEC_ID_DVB_SUBTITLE);
+			avcodec = avcodec_find_decoder(AV_CODEC_ID_DVB_SUBTITLE);
 			break;
 
 		case SubtitleFormatEnum::DvbTeletext:
-			avcodec = avcodec_find_decoder(CODEC_ID_DVB_TELETEXT);
+			avcodec = avcodec_find_decoder(AV_CODEC_ID_DVB_TELETEXT);
 			break;
 
 		default:
@@ -148,7 +148,7 @@ void SubtitleDecoderElement::ProcessBuffer(AVPacketBufferSPTR buffer)
 				timeStamp,  //avSubtitle->pts / (double)AV_TIME_BASE,
 				duration);
 
-			printf("Subtitle: format=%d, start_display_time=%d, end_display_time=%d, num_rects=%d, pts=%" PRId64 "\n",
+			printf("Subtitle: format=%d, start_display_time=%d, end_display_time=%d, num_rects=%d, pts=%lu\n",
 				avSubtitle->format, avSubtitle->start_display_time, avSubtitle->end_display_time, avSubtitle->num_rects, avSubtitle->pts);
 
 			if (avSubtitle->num_rects < 1)

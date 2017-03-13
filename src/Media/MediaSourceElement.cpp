@@ -160,7 +160,7 @@ void MediaSourceElement::SetupPins()
 
 				switch (codec_id)
 				{
-					case CODEC_ID_MPEG2VIDEO:
+					case AV_CODEC_ID_MPEG2VIDEO:
 						printf("stream #%d - VIDEO/MPEG2\n", i);
 						if (info)
 							info->Format = VideoFormatEnum::Mpeg2;
@@ -172,13 +172,13 @@ void MediaSourceElement::SetupPins()
 							info->Format = VideoFormatEnum::Mpeg4V3;
 						break;
 
-					case CODEC_ID_MPEG4:
+					case AV_CODEC_ID_MPEG4:
 						printf("stream #%d - VIDEO/MPEG4\n", i);
 						if (info)
 							info->Format = VideoFormatEnum::Mpeg4;
 						break;
 
-					case CODEC_ID_H264:
+					case AV_CODEC_ID_H264:
 						printf("stream #%d - VIDEO/H264\n", i);
 						if (info)
 							info->Format = VideoFormatEnum::Avc;
@@ -191,7 +191,7 @@ void MediaSourceElement::SetupPins()
 							info->Format = VideoFormatEnum::Hevc;
 						break;
 
-					case CODEC_ID_VC1:
+					case AV_CODEC_ID_VC1:
 						printf("stream #%d - VIDEO/VC1\n", i);
 						if (info)
 							info->Format = VideoFormatEnum::VC1;
@@ -242,31 +242,31 @@ void MediaSourceElement::SetupPins()
 
 				switch (codec_id)
 				{
-					case CODEC_ID_MP2:
+					case AV_CODEC_ID_MP2:
 						printf("stream #%d - AUDIO/MP2\n", i);
 						if (info)
 							info->Format = AudioFormatEnum::MpegLayer2;
 						break;
 
-					case CODEC_ID_MP3:
+					case AV_CODEC_ID_MP3:
 						printf("stream #%d - AUDIO/MP3\n", i);
 						if (info)
 							info->Format = AudioFormatEnum::Mpeg2Layer3;
 						break;
 
-					case CODEC_ID_AAC:
+					case AV_CODEC_ID_AAC:
 						printf("stream #%d - AUDIO/AAC\n", i);
 						if (info)
 							info->Format = AudioFormatEnum::Aac;
 						break;
 
-					case CODEC_ID_AC3:
+					case AV_CODEC_ID_AC3:
 						printf("stream #%d - AUDIO/AC3\n", i);
 						if (info)
 							info->Format = AudioFormatEnum::Ac3;
 						break;
 
-					case CODEC_ID_DTS:
+					case AV_CODEC_ID_DTS:
 						printf("stream #%d - AUDIO/DTS\n", i);
 						if (info)
 							info->Format = AudioFormatEnum::Dts;
@@ -343,40 +343,40 @@ void MediaSourceElement::SetupPins()
 						info->Format = SubtitleFormatEnum::SubRip;
 						break;
 
-					case  CODEC_ID_HDMV_PGS_SUBTITLE:
+					case  AV_CODEC_ID_HDMV_PGS_SUBTITLE:
 						printf("stream #%d - SUBTITLE/HDMV_PGS_SUBTITLE\n", i);
 						info->Format = SubtitleFormatEnum::Pgs;
 						break;
 
-					case  CODEC_ID_DVB_SUBTITLE:
+					case  AV_CODEC_ID_DVB_SUBTITLE:
 						printf("stream #%d - SUBTITLE/DVB_SUBTITLE\n", i);
 						info->Format = SubtitleFormatEnum::Dvb;
 						break;
 
-					case  CODEC_ID_TEXT:
+					case  AV_CODEC_ID_TEXT:
 						printf("stream #%d - SUBTITLE/TEXT\n", i);
 						info->Format = SubtitleFormatEnum::Text;
 						break;
 
-					case  CODEC_ID_XSUB:
+					case  AV_CODEC_ID_XSUB:
 						printf("stream #%d - TODO SUBTITLE/XSUB\n", i);
 						break;
 
-					case  CODEC_ID_SSA:
+					case  AV_CODEC_ID_SSA:
 						printf("stream #%d - TODO SUBTITLE/SSA\n", i);
 						break;
 
-					case  CODEC_ID_MOV_TEXT:
+					case  AV_CODEC_ID_MOV_TEXT:
 						printf("stream #%d - TODO SUBTITLE/MOV_TEXT\n", i);
 						break;
 
 
-					case  CODEC_ID_DVB_TELETEXT:
+					case  AV_CODEC_ID_DVB_TELETEXT:
 						printf("stream #%d - SUBTITLE/DVB_TELETEXT\n", i);
 						info->Format = SubtitleFormatEnum::DvbTeletext;
 						break;
 
-					case  CODEC_ID_SRT:
+					case  AV_CODEC_ID_SRT:
 						printf("stream #%d - TODO SUBTITLE/SRT\n", i);
 						break;
 
@@ -408,7 +408,7 @@ const ChapterListSPTR MediaSourceElement::Chapters() const
 }
 
 
-MediaSourceElement::MediaSourceElement(std::string url, std::string avOptions)
+MediaSourceElement::MediaSourceElement(std::string url)
 	: url(url)
 {
 	AVDictionary* options_dict = NULL;
@@ -427,12 +427,6 @@ MediaSourceElement::MediaSourceElement(std::string url, std::string avOptions)
 	latency. It defaults to 5,000,000 microseconds = 5 seconds.
 	*/
 	av_dict_set(&options_dict, "analyzeduration", "10000000", 0);
-
-	if (av_dict_parse_string(&options_dict, avOptions.c_str(), ":", ",", 0))
-	{
-		printf("Invalid AVDictionary options.\n");
-		throw Exception();
-	}
 
 	int ret = avformat_open_input(&ctx, url.c_str(), NULL, &options_dict);
 	if (ret < 0)
@@ -623,7 +617,7 @@ void MediaSourceElement::Seek(double timeStamp)
 		throw InvalidOperationException();
 	}
 
-	int flags = AVFMT_SEEK_TO_PTS; //AVFMT_SEEK_TO_PTS; //AVSEEK_FLAG_ANY;
+	int flags = AVSEEK_FLAG_ANY; //AVFMT_SEEK_TO_PTS; //AVSEEK_FLAG_ANY;
 	int64_t seekPts = (int64_t)(timeStamp * AV_TIME_BASE);
 
 	//if (seekPts < (long)lastPts)
@@ -645,4 +639,3 @@ void MediaSourceElement::Seek(double timeStamp)
 		Outputs()->Item(i)->SendBuffer(marker);
 	}
 }
-
