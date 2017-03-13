@@ -376,7 +376,7 @@ void MediaSourceElement::SetupPins()
 						info->Format = SubtitleFormatEnum::DvbTeletext;
 						break;
 
-					case  CODEC_ID_SRT:
+					case  AV_CODEC_ID_SRT:
 						printf("stream #%d - TODO SUBTITLE/SRT\n", i);
 						break;
 
